@@ -9,11 +9,12 @@ app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.json({ message: "API is running" });
+  res.json({ message: "API Working" });
 });
 
+// test DB
 sequelize.authenticate()
-  .then(() => console.log("Database connected"))
+  .then(() => console.log("MySQL Connected"))
   .catch(err => console.log(err));
 
 const PORT = process.env.PORT || 5000;
