@@ -29,16 +29,11 @@ function Sidebar() {
             icon: <Users size={18} />,
             path: "/employees",
         },
-        {
-            name: "Departments",
-            icon: <Building2 size={18} />,
-            path: "/departments",
-        },
-        {
-            name: "Reports",
-            icon: <FileText size={18} />,
-            path: "/reports",
-        },
+       {
+    name: "Reports",
+    icon: <FileText size={18} />,
+    path: "/reports",
+},
         {
             name: "Settings",
             icon: <Settings size={18} />,

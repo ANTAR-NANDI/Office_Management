@@ -24,21 +24,15 @@ app.listen(PORT, () => {
 });
 
 const authRoutes = require("./routes/auth.routes");
-
-app.use("/api/auth", authRoutes);
-
 const employeeRoutes = require("./routes/employee.routes");
-
-app.use("/api/employees", employeeRoutes);
-
+const attendanceRoutes =require("./routes/attendance.routes");
+    app.use("/api/auth", authRoutes);
+    app.use("/api/employees", employeeRoutes);
+    app.use("/api/attendance", attendanceRoutes);
 /////////////////////////////////////////
 const User = require("./models/User");
 const Employee = require("./models/Employee");
-
+const Attendance = require("./models/Attendance");
 sequelize.sync({ alter: true })
   .then(() => console.log("DB Synced"))
   .catch(err => console.log(err));
-
-  sequelize.sync({ alter: true })
-    .then(() => console.log("DB Synced"))
-    .catch(err => console.log(err));
