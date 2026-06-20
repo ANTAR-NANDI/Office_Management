@@ -3,37 +3,34 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "../pages/auth/Login";
 import Dashboard from "../pages/dashboard/Dashboard";
 import EmployeeList from "../pages/employees/EmployeeList";
-import Reports from "../pages/reports/Reports";
+
+import Attendance from "../pages/attendance/Attendance";
+import AttendanceDetails from "../pages/attendance/AttendanceDetails";
+
 import DashboardLayout from "../layouts/DashboardLayout";
-import AttendanceDetails from "../pages/reports/AttendanceDetails";
+
 function AppRoutes() {
     return (
         <BrowserRouter>
             <Routes>
 
+                {/* Public Route */}
                 <Route path="/" element={<Login />} />
 
+                {/* Protected Layout */}
                 <Route element={<DashboardLayout />}>
 
-                    <Route
-                        path="/dashboard"
-                        element={<Dashboard />}
-                    />
+                    <Route path="/dashboard" element={<Dashboard />} />
+
+                    <Route path="/employees" element={<EmployeeList />} />
+
+                    {/* Attendance Module */}
+                    <Route path="/report/attendance" element={<Attendance />} />
 
                     <Route
-                        path="/employees"
-                        element={<EmployeeList />}
+                        path="/report/attendance/details/:id"
+                        element={<AttendanceDetails />}
                     />
-
-                    <Route
-                        path="/reports"
-                        element={<Reports />}
-                    />
-
-                        <Route
-                            path="/attendance-details/:id"
-                            element={<AttendanceDetails />}
-                        />
 
                 </Route>
 
