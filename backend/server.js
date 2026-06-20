@@ -27,9 +27,18 @@ const authRoutes = require("./routes/auth.routes");
 
 app.use("/api/auth", authRoutes);
 
+const employeeRoutes = require("./routes/employee.routes");
+
+app.use("/api/employees", employeeRoutes);
+
 /////////////////////////////////////////
 const User = require("./models/User");
+const Employee = require("./models/Employee");
 
 sequelize.sync({ alter: true })
   .then(() => console.log("DB Synced"))
   .catch(err => console.log(err));
+
+  sequelize.sync({ alter: true })
+    .then(() => console.log("DB Synced"))
+    .catch(err => console.log(err));

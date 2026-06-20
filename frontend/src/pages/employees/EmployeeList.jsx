@@ -1,25 +1,26 @@
+import { useEffect, useState } from "react";
+import api from "../../api/axios";
 import { Link } from "react-router-dom";
 
 function EmployeeList() {
 
-    const employees = [
-        {
-            id: 1,
-            name: "John Doe",
-            email: "john@example.com",
-            phone: "01711111111",
-            designation: "Manager",
-            salary: 30000,
-        },
-        {
-            id: 2,
-            name: "Jane Smith",
-            email: "jane@example.com",
-            phone: "01822222222",
-            designation: "Accountant",
-            salary: 25000,
-        },
-    ];
+    const [employees, setEmployees] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetchEmployees();
+    }, []);
+
+    const fetchEmployees = async () => {
+        try {
+            const res = await api.get("/employees");
+            setEmployees(res.data);
+        } catch (error) {
+            console.log("Error fetching employees:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="bg-white rounded-2xl shadow-sm p-6">
@@ -44,64 +45,83 @@ function EmployeeList() {
             </div>
 
             <div className="overflow-x-auto">
-                <table className="w-full border-collapse">
 
-                    <thead>
-                        <tr className="bg-slate-100">
-                            <th className="p-3 text-left">#</th>
-                            <th className="p-3 text-left">Name</th>
-                            <th className="p-3 text-left">Email</th>
-                            <th className="p-3 text-left">Phone</th>
-                            <th className="p-3 text-left">Designation</th>
-                            <th className="p-3 text-left">Salary</th>
-                            <th className="p-3 text-center">Action</th>
-                        </tr>
-                    </thead>
+                {loading ? (
+                    <p className="text-center py-6 text-slate-500">
+                        Loading employees...
+                    </p>
+                ) : (
+                    <table className="w-full border-collapse">
 
-                    <tbody>
-                        {employees.map((employee, index) => (
-                            <tr
-                                key={employee.id}
-                                className="border-b hover:bg-slate-50"
-                            >
-                                <td className="p-3">
-                                    {index + 1}
-                                </td>
-
-                                <td className="p-3">
-                                    {employee.name}
-                                </td>
-
-                                <td className="p-3">
-                                    {employee.email}
-                                </td>
-
-                                <td className="p-3">
-                                    {employee.phone}
-                                </td>
-
-                                <td className="p-3">
-                                    {employee.designation}
-                                </td>
-
-                                <td className="p-3">
-                                    ৳ {employee.salary}
-                                </td>
-
-                                <td className="p-3 text-center">
-                                    <button className="bg-blue-500 text-white px-3 py-1 rounded mr-2">
-                                        Edit
-                                    </button>
-
-                                    <button className="bg-red-500 text-white px-3 py-1 rounded">
-                                        Delete
-                                    </button>
-                                </td>
+                        <thead>
+                            <tr className="bg-slate-100">
+                                <th className="p-3 text-left">#</th>
+                                <th className="p-3 text-left">Name</th>
+                                <th className="p-3 text-left">Email</th>
+                                <th className="p-3 text-left">Phone</th>
+                                <th className="p-3 text-left">Designation</th>
+                                <th className="p-3 text-left">Salary</th>
+                                <th className="p-3 text-center">Action</th>
                             </tr>
-                        ))}
-                    </tbody>
+                        </thead>
 
-                </table>
+                        <tbody>
+                            {employees.length > 0 ? (
+                                employees.map((employee, index) => (
+                                    <tr
+                                        key={employee.id}
+                                        className="border-b hover:bg-slate-50"
+                                    >
+                                        <td className="p-3">
+                                            {index + 1}
+                                        </td>
+
+                                        <td className="p-3">
+                                            {employee.name}
+                                        </td>
+
+                                        <td className="p-3">
+                                            {employee.email}
+                                        </td>
+
+                                        <td className="p-3">
+                                            {employee.phone}
+                                        </td>
+
+                                        <td className="p-3">
+                                            {employee.designation}
+                                        </td>
+
+                                        <td className="p-3">
+                                            ৳ {employee.salary}
+                                        </td>
+
+                                        <td className="p-3 text-center">
+                                            <button className="bg-blue-500 text-white px-3 py-1 rounded mr-2">
+                                                Edit
+                                            </button>
+
+                                            <button className="bg-red-500 text-white px-3 py-1 rounded">
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td
+                                        colSpan="7"
+                                        className="text-center py-6 text-slate-500"
+                                    >
+                                        No employees found
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+
+                    </table>
+                )}
+
             </div>
 
         </div>
