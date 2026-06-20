@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "../pages/auth/Login";
 import Dashboard from "../pages/dashboard/Dashboard";
 import EmployeeList from "../pages/employees/EmployeeList";
-import EmployeeCreate from "../pages/employees/EmployeeCreate";
 
 import DashboardLayout from "../layouts/DashboardLayout";
 
@@ -24,11 +23,6 @@ function AppRoutes() {
                     <Route
                         path="/employees"
                         element={<EmployeeList />}
-                    />
-
-                    <Route
-                        path="/employees/create"
-                        element={<EmployeeCreate />}
                     />
 
                 </Route>
