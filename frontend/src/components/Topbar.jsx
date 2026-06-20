@@ -11,11 +11,9 @@ function Topbar() {
             {/* Left */}
             <div>
                 <h2 className="text-2xl font-bold text-slate-800">
-                    Dashboard
-                </h2>
-                <p className="text-sm text-slate-500">
                     Welcome back, Admin
-                </p>
+                </h2>
+                
             </div>
 
             {/* Right */}
