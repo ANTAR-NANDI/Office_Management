@@ -49,19 +49,24 @@ function Login() {
             <div className="w-full max-w-md bg-white/70 backdrop-blur-md border border-white/40 shadow-2xl p-8 rounded-3xl relative z-10">
                 <div className="text-center mb-8">
                     <h2 className="text-4xl font-extrabold text-slate-800 tracking-tight mb-2">
-                        Welcome Back
+                        Office Management System
                     </h2>
                     <p className="text-slate-500 text-sm">
-                        Please enter your details to sign in
+                        Login to Enter Dashboard
                     </p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-5">
                     {/* Email Input */}
                     <div>
-                        <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
-                            Email Address
-                        </label>
+                        <div className="flex justify-between items-center mb-2">
+                            <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                                EMAIL ADDRESS
+                            </label>
+                            <a href="#forgot" className="text-xs font-medium text-cyan-600 hover:text-cyan-700 transition-colors">
+                              
+                            </a>
+                        </div>
                         <div className="relative rounded-xl shadow-sm">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                                 <Mail size={18} />
@@ -119,13 +124,7 @@ function Login() {
                     </button>
                 </form>
 
-                {/* Footer link inside card */}
-                <p className="text-center text-sm text-slate-500 mt-8">
-                    Don't have an account?{" "}
-                    <a href="#signup" className="font-semibold text-blue-600 hover:underline">
-                        Sign Up
-                    </a>
-                </p>
+               
             </div>
 
             {/* Copyright Note */}
