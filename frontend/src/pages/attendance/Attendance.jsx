@@ -93,10 +93,10 @@ function Reports() {
 
                 <button
                     onClick={fetchReports}
-                    className="bg-cyan-600 text-white rounded-lg"
+                    className="cursor bg-cyan-600 text-white rounded-lg"
                 >
                     Search
-                </button>
+                </button >
             </div>
 
             {/* TABLE */}
@@ -144,7 +144,7 @@ function Reports() {
                                             `/report/attendance/details/${item.employee_id}`
                                         )
                                     }
-                                    className="bg-blue-500 text-white px-3 py-1 rounded"
+                                    className="bg-blue-500 text-white px-3 py-1 rounded cursor"
                                 >
                                     Details
                                 </button>

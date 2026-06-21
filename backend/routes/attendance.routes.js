@@ -156,21 +156,52 @@ router.get("/report", async (req, res) => {
 });
 
 router.get("/details/:employee_id", async (req, res) => {
-
     try {
+        const attendanceRecords = await Attendance.findAll({
+            where: {
+                employee_id: req.params.employee_id
+            },
+            order: [
+                ["date", "DESC"]
+            ]
+        });
 
-        const data =
-            await Attendance.findAll({
-                where: {
-                    employee_id:
-                        req.params.employee_id
-                },
-                order: [
-                    ["date", "DESC"]
-                ]
-            });
+        // প্রতিটি রেকর্ডের সাথে duration হিসাব করে নতুন একটি অ্যারে তৈরি করা হচ্ছে
+        const dataWithDuration = attendanceRecords.map(record => {
+            // Sequelize instance-কে সাধারণ JavaScript Object-এ রূপান্তর
+            const plainRecord = record.get({ plain: true }); 
+            
+            if (plainRecord.check_in && plainRecord.check_out) {
+                // আজকের তারিখের সাথে সময় দুটিকে মিলিয়ে dummy Date অবজেক্ট তৈরি করা হচ্ছে
+                const today = new Date().toISOString().split('T')[0];
+                const checkInTime = new Date(`${today}T${plainRecord.check_in}`);
+                const checkOutTime = new Date(`${today}T${plainRecord.check_out}`);
 
-        res.json(data);
+                // মিলিসেকেন্ডের পার্থক্য বের করা
+                let diffInMs = checkOutTime - checkInTime;
+
+                // যদি নাইট শিফট হয় (অর্থাৎ চেক-আউট পরের দিন সকাল বা মাঝরাতে হয়)
+                if (diffInMs < 0) {
+                    diffInMs += 24 * 60 * 60 * 1000; // ২৪ ঘণ্টা যোগ করা হলো
+                }
+
+                // মিলিসেকেন্ড থেকে ঘণ্টা ও মিনিটে রূপান্তর
+                const totalMinutes = Math.floor(diffInMs / (1000 * 60));
+                const hours = Math.floor(totalMinutes / 60);
+                const minutes = totalMinutes % 60;
+
+                // নতুন প্রোপার্টি হিসেবে অবজেক্টে যুক্ত করা হলো
+                plainRecord.duration = `${hours}h ${minutes}m`;
+                plainRecord.total_minutes = totalMinutes; // ফ্রন্টএন্ডে হিসাব সহজ করার জন্য
+            } else {
+                plainRecord.duration = "N/A";
+                plainRecord.total_minutes = 0;
+            }
+
+            return plainRecord;
+        });
+
+        res.json(dataWithDuration);
 
     } catch (error) {
         res.status(500).json({

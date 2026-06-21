@@ -110,7 +110,7 @@ function EmployeeList() {
 
                 <button
                     onClick={openCreateModal}
-                    className="bg-cyan-600 hover:bg-cyan-700 text-white px-5 py-2 rounded-xl"
+                    className="cursor bg-cyan-600 hover:bg-cyan-700 text-white px-5 py-2 rounded-xl"
                 >
                     Add Employee
                 </button>
@@ -172,14 +172,14 @@ function EmployeeList() {
 
                                         <button
                                             onClick={() => openEditModal(employee)}
-                                            className="bg-blue-500 text-white px-3 py-1 rounded mr-2"
+                                            className="cursor bg-blue-500 text-white px-3 py-1 rounded mr-2"
                                         >
                                             Edit
                                         </button>
 
                                         <button
                                             onClick={() => handleDelete(employee.id)}
-                                            className="bg-red-500 text-white px-3 py-1 rounded"
+                                            className="cursor bg-red-500 text-white px-3 py-1 rounded"
                                         >
                                             Delete
                                         </button>
@@ -256,14 +256,14 @@ function EmployeeList() {
                                 <button
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
-                                    className="px-4 py-2 border rounded"
+                                    className="cursor px-4 py-2 border rounded"
                                 >
                                     Cancel
                                 </button>
 
                                 <button
                                     type="submit"
-                                    className="bg-green-600 text-white px-4 py-2 rounded"
+                                    className="cursor bg-green-600 text-white px-4 py-2 rounded"
                                 >
                                     {editEmployee ? "Update" : "Save"}
                                 </button>

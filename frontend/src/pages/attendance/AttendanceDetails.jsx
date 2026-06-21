@@ -16,6 +16,7 @@ function AttendanceDetails() {
         try {
             const res = await api.get(`/attendance/details/${id}`);
             setData(res.data);
+            console.log(res.data);
         } catch (error) {
             console.log("Error fetching attendance details:", error);
         } finally {
@@ -51,6 +52,7 @@ function AttendanceDetails() {
                             <th className="p-2">Date</th>
                             <th className="p-2">Check In</th>
                             <th className="p-2">Check Out</th>
+                             <th className="p-2">Duration</th>
                             <th className="p-2">Status</th>
                         </tr>
                     </thead>
@@ -61,7 +63,8 @@ function AttendanceDetails() {
                                 <tr key={item.id} className="border-t">
                                     <td className="p-2">{item.date}</td>
                                    <td>{formatTime(item.check_in)}</td>
-<td>{formatTime(item.check_out)}</td>
+                                   <td>{formatTime(item.check_out)}</td>
+                                   <td className="p-2">{item.duration}</td>
                                     <td className="p-2">{item.status}</td>
                                 </tr>
                             ))
