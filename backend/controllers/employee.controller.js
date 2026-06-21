@@ -61,9 +61,9 @@ const updateEmployee = async (req, res) => {
         employee.designation = designation || employee.designation;
         employee.salary = salary || employee.salary;
         employee.type = type || employee.type;
-
+         const hashedPassword = await bcrypt.hash(password, 10);
         if (password) {
-            employee.password = password; // Trigger hook hash encapsulation
+            employee.password = password ? hashedPassword : employee.password; // Trigger hook hash encapsulation
         }
 
         await employee.save();
