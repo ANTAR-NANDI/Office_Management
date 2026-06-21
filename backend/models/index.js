@@ -1,5 +1,4 @@
 const sequelize = require("../config/db");
-
 const Employee = require("./Employee");
 const Attendance = require("./Attendance");
 

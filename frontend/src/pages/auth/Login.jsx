@@ -27,7 +27,7 @@ function Login() {
                 password,
             });
             
-            setToken(response.data.token,response.data.user.id);
+            setToken(response.data.token,response.data.employee.id);
             navigate("/dashboard");
         } catch (error) {
             alert(

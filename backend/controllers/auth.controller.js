@@ -1,25 +1,26 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const User = require("../models/User");
+const Employee = require("../models/Employee");
 
 const register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, type } = req.body;
 
-    const existingUser = await User.findOne({ where: { email } });
-    if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
+    const existingEmployee = await Employee.findOne({ where: { email } });
+    if (existingEmployee) {
+      return res.status(400).json({ message: "Employee already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await User.create({
+    const employee = await Employee.create({
       name,
       email,
       password: hashedPassword,
+      type
     });
 
-    res.json({ message: "User registered successfully", user });
+    res.json({ message: "Employee registered successfully", employee });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -29,18 +30,18 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ where: { email } });
-    if (!user) {
-      return res.status(400).json({ message: "User not found" });
+    const employee = await Employee.findOne({ where: { email } });
+    if (!employee) {
+      return res.status(400).json({ message: "Employee not found" });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, employee.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid password" });
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email },
+      { id: employee.id, email: employee.email },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
@@ -48,7 +49,7 @@ const login = async (req, res) => {
     res.json({
       message: "Login successful",
       token,
-      user,
+      employee,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

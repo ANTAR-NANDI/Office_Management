@@ -44,6 +44,8 @@ function EmployeeList() {
             phone: "",
             designation: "",
             salary: "",
+            password:"",
+            type:"employee"
         });
         setIsModalOpen(true);
     };
@@ -57,6 +59,8 @@ function EmployeeList() {
             phone: employee.phone || "",
             designation: employee.designation || "",
             salary: employee.salary || "",
+            password: employee.password || "",
+            type: employee.type || "",
         });
         setIsModalOpen(true);
     };

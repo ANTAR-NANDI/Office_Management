@@ -2,7 +2,8 @@ const { Employee, Attendance } = require("../models");
 
 const getDashboardStats = async (req, res) => {
     try {
-        const today = new Date().toISOString().split("T")[0];
+        // Fix: Use localized Asia/Dhaka time tracking to align stats perfectly
+        const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Dhaka" });
 
         const totalEmployees = await Employee.count();
 

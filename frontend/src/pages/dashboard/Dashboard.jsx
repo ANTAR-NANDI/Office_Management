@@ -34,25 +34,26 @@ function Dashboard() {
             setLoading(false);
         }
     };
-    const handleCheckIn = async () => {
-        
-        try {
-          const employee_id = localStorage.getItem("user_id")
+   const handleCheckIn = async () => {
+    try {
+        const employee_id = localStorage.getItem("user_id");
 
         if (!employee_id) {
             alert("User not logged in");
             return;
         }
-            console.log("sending checkin");
-             const res = await api.post("attendance/checkin", {
-                employee_id,
-            });
 
-            alert("Checked In Successfully");
-        } catch (err) {
-            alert(err.response.data.message);
-        }
-    };
+        // Fixed: Added the missing forward slash before attendance
+        const res = await api.post("/attendance/checkin", {
+            employee_id,
+        });
+
+        alert("Checked In Successfully");
+        fetchDashboardStats(); // Refresh stats instantly after checking in!
+    } catch (err) {
+        alert(err.response?.data?.message || "Check-in failed");
+    }
+};
 
     const handleCheckOut = async () => {
         try {

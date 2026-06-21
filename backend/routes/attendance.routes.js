@@ -129,11 +129,47 @@ router.get("/details/:employee_id", async (req, res) => {
 router.post("/checkin", async (req, res) => {
     try {
         const { employee_id } = req.body; // [cite: 46]
-        
-
+        const now = new Date();
+        // Target Bangladesh timezone explicitly
+        const options = { timeZone: "Asia/Dhaka", hour12: false };
+        // 1. Get accurate Date (YYYY-MM-DD)
+        const datePart = now.toLocaleDateString("en-CA", options); // Format: YYYY-MM-DD
+        // 2. Get accurate Time (HH:MM:SS)
+        const timePart = now.toLocaleTimeString("en-US", options); // Format: HH:MM:SS
+        // 10:00 AM status check
+        const cutoff = "10:00:00";
+        const status = timePart <= cutoff ? "Present" : "Late";
+        // Prevent duplicate check-in [cite: 18]
+        const existing = await Attendance.findOne({
+            where: {
+                employee_id,
+                date: datePart,
+            },
+        });
+        if (existing) {
+            return res.status(400).json({
+                message: "Already checked in today",
+            });
+        }
+        const attendance = await Attendance.create({
+            employee_id,
+            date: datePart,
+            check_in: timePart,
+            status,
+        });
+        res.json(attendance);
+    } catch (error) {
+        res.status(500).json({
+            message: error.message,
+        });
+    }
+});
+   router.post("/checkout", async (req, res) => {
+    try {
+        const { employee_id } = req.body;
         const now = new Date();
 
-        // Target Bangladesh timezone explicitly
+        // Target Bangladesh timezone explicitly (Consistent with Check-In)
         const options = { timeZone: "Asia/Dhaka", hour12: false };
 
         // 1. Get accurate Date (YYYY-MM-DD)
@@ -142,67 +178,32 @@ router.post("/checkin", async (req, res) => {
         // 2. Get accurate Time (HH:MM:SS)
         const timePart = now.toLocaleTimeString("en-US", options); // Format: HH:MM:SS
 
-        // 10:00 AM status check
-        const cutoff = "10:00:00";
-        const status = timePart <= cutoff ? "Present" : "Late";
-
-        // Prevent duplicate check-in [cite: 18]
-        const existing = await Attendance.findOne({
-            where: {
-                employee_id,
-                date: datePart,
-            },
-        });
-
-        if (existing) {
-            return res.status(400).json({
-                message: "Already checked in today",
-            });
-        }
-
-        const attendance = await Attendance.create({
-            employee_id,
-            date: datePart,
-            check_in: timePart,
-            status,
-        });
-
-        res.json(attendance);
-
-    } catch (error) {
-        res.status(500).json({
-            message: error.message,
-        });
-    }
-});
-   router.post("/checkout", async (req, res) => {
-     try {
-        const { employee_id } = req.body;
-
-        const now = new Date();
-        const bdTime = new Date(now.getTime() + 6 * 60 * 60 * 1000);
-
-        const timeString = bdTime.toTimeString().split(" ")[0];
-        const dateString = bdTime.toISOString().split("T")[0];
-
+        // Find today's check-in record for this employee
         const record = await Attendance.findOne({
             where: {
                 employee_id,
-                date: dateString,
+                date: datePart, // Using the timezone-safe date string
             },
         });
 
         if (!record) {
             return res.status(404).json({
-                message: "No check-in found",
+                message: "No check-in record found for today",
             });
         }
 
-        record.check_out = timeString;
+        // Prevent updating check-out if they already checked out
+        if (record.check_out) {
+            return res.status(400).json({
+                message: "Already checked out today",
+            });
+        }
+
+        // Update the checkout field with the localized time string
+        record.check_out = timePart;
         await record.save();
 
         res.json(record);
-
     } catch (error) {
         res.status(500).json({
             message: error.message,
