@@ -24,7 +24,7 @@ app.listen(PORT, () => {
 });
 
 const authRoutes = require("./routes/auth.routes");
-const employeeRoutes = require("./routes/employee.routes");
+const employeeRoutes = require("./routes/user.routes");
 const attendanceRoutes =require("./routes/attendance.routes");
 const dashboardRoutes = require("./routes/dashboard.routes");
     app.use("/api/auth", authRoutes);

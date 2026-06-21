@@ -10,12 +10,14 @@ function EmployeeList() {
     const [editEmployee, setEditEmployee] = useState(null);
 
     const [form, setForm] = useState({
-        name: "",
-        email: "",
-        phone: "",
-        designation: "",
-        salary: "",
-    });
+    name: "",
+    email: "",
+    phone: "",
+    designation: "",
+    salary: "",
+    password: "",
+    type: "",
+});
 
     useEffect(() => {
         fetchEmployees();
@@ -250,6 +252,40 @@ function EmployeeList() {
                                 placeholder="Salary"
                                 className="w-full border p-3 rounded"
                             />
+                            <input
+                                type="password"
+                                value={form.password}
+                                onChange={(e) =>
+                                    setForm({
+                                        ...form,
+                                        password: e.target.value
+                                    })
+                                }
+                                placeholder="Password"
+                                className="w-full border p-3 rounded"
+                            />
+                            <select
+                                value={form.type}
+                                onChange={(e) =>
+                                    setForm({
+                                        ...form,
+                                        type: e.target.value
+                                    })
+                                }
+                                className="w-full border p-3 rounded"
+                            >
+                                <option value="employee">
+                                    Employee
+                                </option>
+
+                                <option value="hr">
+                                    HR
+                                </option>
+
+                                <option value="admin">
+                                    Admin
+                                </option>
+                            </select>
 
                             <div className="flex justify-end gap-2 pt-3">
 
