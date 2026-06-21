@@ -56,8 +56,12 @@ function Dashboard() {
 
     const handleCheckOut = async () => {
         try {
-           const user = JSON.parse(localStorage.getItem("user"));
-const employee_id = user?.employee_id;
+           const employee_id = localStorage.getItem("user_id")
+           console.log(employee_id);
+         if (!employee_id) {
+            alert("User not logged in");
+            return;
+        }
 
             await api.post("/attendance/checkout", {
                 employee_id,
@@ -175,23 +179,25 @@ const employee_id = user?.employee_id;
                 </div>
 
                 {/* ACTIVITY */}
-                <div className="bg-white p-6 rounded-xl shadow-sm">
-                    <div className="flex gap-4">
-                        <button
-                            onClick={handleCheckIn}
-                            className="bg-green-600 text-white px-4 py-2 rounded cursor-pointer"
-                        >
-                            Check In
-                        </button>
+                <div className="bg-white p-10 rounded-2xl shadow-md">
+                        <div className="flex flex-wrap gap-8">
+                            <button
+                                onClick={handleCheckIn}
+                                className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+                            >
+                                <span>🟢</span>
+                                <span>Check In</span>
+                            </button>
 
-                        <button
-                            onClick={handleCheckOut}
-                            className="bg-red-600 text-white px-4 py-2 rounded cursor-pointer"
-                        >
-                            Check Out
-                        </button>
+                            <button
+                                onClick={handleCheckOut}
+                                className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+                            >
+                                <span>🔴</span>
+                                <span>Check Out</span>
+                            </button>
+                        </div>
                     </div>
-                </div>
             </div>
         </div>
     );

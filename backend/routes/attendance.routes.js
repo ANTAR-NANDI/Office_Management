@@ -175,8 +175,8 @@ router.post("/checkin", async (req, res) => {
         });
     }
 });
-router.get("/check-out", async (req, res) => {
-try {
+   router.post("/checkout", async (req, res) => {
+     try {
         const { employee_id } = req.body;
 
         const now = new Date();
