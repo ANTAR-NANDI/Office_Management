@@ -1,95 +1,11 @@
 const express = require("express");
 const router = express.Router();
 
+
 const Attendance = require("../models/Attendance");
 const Employee = require("../models/Employee");
 const { Op } = require("sequelize");
 
-router.post("/checkin", async (req, res) => {
-
-    try {
-
-        const { employee_id } = req.body;
-
-        const today = new Date();
-
-        const date = today.toISOString().split("T")[0];
-
-        const time = today.toTimeString().split(" ")[0];
-
-        const exists = await Attendance.findOne({
-            where: {
-                employee_id,
-                date
-            }
-        });
-
-        if (exists) {
-            return res.status(400).json({
-                message: "Already checked in today"
-            });
-        }
-
-        let status = "Present";
-
-        if (time > "10:00:00") {
-            status = "Late";
-        }
-
-        const attendance = await Attendance.create({
-            employee_id,
-            date,
-            check_in: time,
-            status
-        });
-
-        res.json(attendance);
-
-    } catch (error) {
-        res.status(500).json({
-            message: error.message
-        });
-    }
-});
-
-router.post("/checkout", async (req, res) => {
-
-    try {
-
-        const { employee_id } = req.body;
-
-        const today =
-            new Date().toISOString().split("T")[0];
-
-        const time =
-            new Date().toTimeString().split(" ")[0];
-
-        const attendance =
-            await Attendance.findOne({
-                where: {
-                    employee_id,
-                    date: today
-                }
-            });
-
-        if (!attendance) {
-            return res.status(404).json({
-                message: "Check In First"
-            });
-        }
-
-        attendance.check_out = time;
-
-        await attendance.save();
-
-        res.json(attendance);
-
-    } catch (error) {
-        res.status(500).json({
-            message: error.message
-        });
-    }
-});
 router.get("/report", async (req, res) => {
 
     try {
@@ -209,4 +125,90 @@ router.get("/details/:employee_id", async (req, res) => {
         });
     }
 });
+
+router.post("/checkin", async (req, res) => {
+    try {
+        const { employee_id } = req.body; // [cite: 46]
+        
+
+        const now = new Date();
+
+        // Target Bangladesh timezone explicitly
+        const options = { timeZone: "Asia/Dhaka", hour12: false };
+
+        // 1. Get accurate Date (YYYY-MM-DD)
+        const datePart = now.toLocaleDateString("en-CA", options); // Format: YYYY-MM-DD
+
+        // 2. Get accurate Time (HH:MM:SS)
+        const timePart = now.toLocaleTimeString("en-US", options); // Format: HH:MM:SS
+
+        // 10:00 AM status check
+        const cutoff = "10:00:00";
+        const status = timePart <= cutoff ? "Present" : "Late";
+
+        // Prevent duplicate check-in [cite: 18]
+        const existing = await Attendance.findOne({
+            where: {
+                employee_id,
+                date: datePart,
+            },
+        });
+
+        if (existing) {
+            return res.status(400).json({
+                message: "Already checked in today",
+            });
+        }
+
+        const attendance = await Attendance.create({
+            employee_id,
+            date: datePart,
+            check_in: timePart,
+            status,
+        });
+
+        res.json(attendance);
+
+    } catch (error) {
+        res.status(500).json({
+            message: error.message,
+        });
+    }
+});
+router.get("/check-out", async (req, res) => {
+try {
+        const { employee_id } = req.body;
+
+        const now = new Date();
+        const bdTime = new Date(now.getTime() + 6 * 60 * 60 * 1000);
+
+        const timeString = bdTime.toTimeString().split(" ")[0];
+        const dateString = bdTime.toISOString().split("T")[0];
+
+        const record = await Attendance.findOne({
+            where: {
+                employee_id,
+                date: dateString,
+            },
+        });
+
+        if (!record) {
+            return res.status(404).json({
+                message: "No check-in found",
+            });
+        }
+
+        record.check_out = timeString;
+        await record.save();
+
+        res.json(record);
+
+    } catch (error) {
+        res.status(500).json({
+            message: error.message,
+        });
+    }
+});
+
+
 module.exports = router;

@@ -26,9 +26,11 @@ app.listen(PORT, () => {
 const authRoutes = require("./routes/auth.routes");
 const employeeRoutes = require("./routes/employee.routes");
 const attendanceRoutes =require("./routes/attendance.routes");
+const dashboardRoutes = require("./routes/dashboard.routes");
     app.use("/api/auth", authRoutes);
     app.use("/api/employees", employeeRoutes);
     app.use("/api/attendance", attendanceRoutes);
+    app.use("/api/dashboard", dashboardRoutes);
 /////////////////////////////////////////
 const User = require("./models/User");
 const Employee = require("./models/Employee");

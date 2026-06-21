@@ -26,8 +26,8 @@ function Login() {
                 email,
                 password,
             });
-
-            setToken(response.data.token);
+            
+            setToken(response.data.token,response.data.user.id);
             navigate("/dashboard");
         } catch (error) {
             alert(
