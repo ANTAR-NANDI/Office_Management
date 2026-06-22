@@ -81,9 +81,13 @@ function Sidebar() {
 
     return (
         <aside className="w-72 h-screen bg-slate-900 text-white flex flex-col shadow-2xl sticky top-0">
-            <div className="h-20 flex items-center justify-center px-6 border-b border-slate-800">
-                <img src={Logo} alt="Logo" className="h-12 w-auto object-contain" />
-            </div>
+            <div className="h-24 flex items-center px-6 border-b border-slate-800">
+    <img
+        src={Logo}
+        alt="Logo"
+        className="h-53 mt-8 w-full object-contain"
+    />
+</div>
 
             <nav className="flex-1 p-4 overflow-y-auto">
                 <ul className="space-y-2">
