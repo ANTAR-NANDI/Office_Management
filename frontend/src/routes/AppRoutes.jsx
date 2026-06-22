@@ -9,7 +9,7 @@ import AttendanceDetails from "../pages/attendance/AttendanceDetails";
 import Leaves from "../pages/Leaves";
 import DashboardLayout from "../layouts/DashboardLayout";
 import Settings from "../pages/Settings";
-
+import Profile from "../pages/Profile";
 function AppRoutes() {
     return (
         <BrowserRouter>
@@ -34,7 +34,7 @@ function AppRoutes() {
                     />
                     <Route path="/settings" element={<Settings />} />
                      <Route path="/leaves" element={<Leaves />} />
-
+                     <Route path="/profile" element={<Profile />} />
 
                 </Route>
 

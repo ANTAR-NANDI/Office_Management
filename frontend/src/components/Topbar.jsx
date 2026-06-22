@@ -3,9 +3,9 @@ import {
     Search,
     UserCircle2
 } from "lucide-react";
-
+import { useNavigate } from "react-router-dom";
 function Topbar() {
-    
+    const navigate = useNavigate();
     return (
         <header className="h-20 bg-white border-b flex items-center justify-between px-8 shadow-sm">
             {/* Left */}
@@ -22,20 +22,16 @@ function Topbar() {
 
                 {/* Profile */}
                 <div className="flex items-center gap-2">
-                    <UserCircle2
-                        size={34}
-                        className="text-cyan-600"
-                    />
 
-                    <div>
-                        <h4 className="text-sm font-semibold">
-                            Admin
-                        </h4>
-
-                        <p className="text-xs text-slate-500">
-                            Super Admin
-                        </p>
-                    </div>
+                    <button
+                        onClick={() => {
+                            navigate("/profile"); // 👈 পরিবর্তন করে সেটিংসের বদলে "/profile" এ পাঠানো হচ্ছে
+                        }}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-slate-600 hover:bg-slate-50 hover:text-cyan-600 transition text-left cursor-pointer font-medium"
+>
+    <UserCircle2 size={16} /> {/* আপনি চাইলে এখানে আইকন পরিবর্তন করতে পারেন */}
+    My Profile
+</button>
                 </div>
             </div>
         </header>
