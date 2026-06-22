@@ -48,6 +48,12 @@ function Sidebar() {
             ]
         },
         {
+            name: "Leave Requests",
+            icon: <FileText size={18} />,
+            path: "/leaves",
+            allowedRoles: ["admin", "hr", "employee"] // View scope handles sorting rules internally
+        },
+        {
             name: "Settings",
             icon: <Settings size={18} />,
             path: "/settings",

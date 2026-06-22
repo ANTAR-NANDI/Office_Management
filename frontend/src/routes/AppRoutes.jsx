@@ -6,7 +6,7 @@ import EmployeeList from "../pages/employees/EmployeeList";
 
 import Attendance from "../pages/attendance/Attendance";
 import AttendanceDetails from "../pages/attendance/AttendanceDetails";
-
+import Leaves from "../pages/Leaves";
 import DashboardLayout from "../layouts/DashboardLayout";
 import Settings from "../pages/Settings";
 
@@ -33,6 +33,7 @@ function AppRoutes() {
                         element={<AttendanceDetails />}
                     />
                     <Route path="/settings" element={<Settings />} />
+                     <Route path="/leaves" element={<Leaves />} />
 
 
                 </Route>
