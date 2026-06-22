@@ -2,8 +2,8 @@ const { Purchase } = require("../models");
 
 exports.addPurchase = async (req, res) => {
     try {
-        const { details, amount, buyer_name, date } = req.body;
-        const newPurchase = await Purchase.create({ details, amount, buyer_name, date });
+        const { details, amount, employee_id, date } = req.body;
+        const newPurchase = await Purchase.create({ details, amount, employee_id, date });
         res.status(201).json({ message: "Purchase record added successfully!", newPurchase });
     } catch (error) {
         res.status(500).json({ message: error.message });

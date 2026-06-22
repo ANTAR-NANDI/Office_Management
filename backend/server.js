@@ -45,6 +45,6 @@ app.use("/api/leaves", leaveRoutes); // 🟢 ২. Leaves এন্ডপয়ে�
 // নিশ্চিত করুন models/index.js ফাইলে Leave মডেলটি ইম্পোর্ট ও অ্যাসোসিয়েট করা আছে 
 const { Employee, Attendance, Setting, Leave,Cost,Purchase } = require("./models"); 
 
-Purchase.sync({ alter: true })
+Cost.sync({ alter: true })
   .then(() => console.log("Database Migrated & Synced Successfully"))
   .catch(err => console.log("Migration Error:", err));
