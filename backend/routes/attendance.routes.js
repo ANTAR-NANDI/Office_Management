@@ -77,10 +77,19 @@ router.get("/details/:employee_id", async (req, res) => {
             where: {
                 employee_id: req.params.employee_id
             },
+            include: [
+                {
+                    model: Employee,
+                    attributes: ["name", "designation"] // Only fetch what we need
+                },
+                
+
+            ],
             order: [
                 ["date", "DESC"]
             ]
         });
+        console.log(attendanceRecords);
 
         // প্রতিটি রেকর্ডের সাথে duration হিসাব করে নতুন একটি অ্যারে তৈরি করা হচ্ছে
         const dataWithDuration = attendanceRecords.map(record => {
@@ -116,7 +125,7 @@ router.get("/details/:employee_id", async (req, res) => {
 
             return plainRecord;
         });
-
+        
         res.json(dataWithDuration);
 
     } catch (error) {

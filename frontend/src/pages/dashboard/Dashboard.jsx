@@ -115,10 +115,11 @@ function Dashboard() {
             icon: "🔴",
         },
     ];
-
+const userRole = localStorage.getItem("user_role");
     return (
         <div className="space-y-6">
             {/* HEADER */}
+            {userRole === "admin" && (
             <div className="flex justify-between items-start">
                 <div>
                     <h2 className="text-xl font-bold text-slate-800">
@@ -139,8 +140,9 @@ function Dashboard() {
                     </button>
                 </div>
             </div>
+            )}
 
-            {/* STATS */}
+            {userRole === "admin" && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {stats.map((item, i) => (
                     <div
@@ -165,10 +167,12 @@ function Dashboard() {
                     </div>
                 ))}
             </div>
+            )}
 
-            {/* CHART + ACTIVITY */}
+            
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* CHART */}
+                 {userRole === "admin" && (
                 <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm">
                     <h3 className="font-semibold mb-4">
                         Weekly Attendance
@@ -178,6 +182,7 @@ function Dashboard() {
                         Chart Area (Recharts / Chart.js)
                     </div>
                 </div>
+                 )}
 
                 {/* ACTIVITY */}
                 <div className="bg-white p-10 rounded-2xl shadow-md">
