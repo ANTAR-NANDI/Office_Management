@@ -10,6 +10,8 @@ import Leaves from "../pages/Leaves";
 import DashboardLayout from "../layouts/DashboardLayout";
 import Settings from "../pages/Settings";
 import Profile from "../pages/Profile";
+import Costs from "../pages/Costs";
+import Purchases from "../pages/Purchases";
 function AppRoutes() {
     return (
         <BrowserRouter>
@@ -35,6 +37,8 @@ function AppRoutes() {
                     <Route path="/settings" element={<Settings />} />
                      <Route path="/leaves" element={<Leaves />} />
                      <Route path="/profile" element={<Profile />} />
+                     <Route path="/costs" element={<Costs />} />
+<Route path="/purchases" element={<Purchases />} />
 
                 </Route>
 

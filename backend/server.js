@@ -37,12 +37,14 @@ app.use("/api/employees", employeeRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/settings", settingRoutes);
+app.use("/api/costs", require("./routes/cost.routes"));
+app.use("/api/purchases", require("./routes/purchase.routes"));
 app.use("/api/leaves", leaveRoutes); // 🟢 ২. Leaves এন্ডপয়েন্ট মাউন্ট করা হলো [cite: 1211]
 
 // --- DATABASE SYNC ---
 // নিশ্চিত করুন models/index.js ফাইলে Leave মডেলটি ইম্পোর্ট ও অ্যাসোসিয়েট করা আছে 
-const { Employee, Attendance, Setting, Leave } = require("./models"); 
+const { Employee, Attendance, Setting, Leave,Cost,Purchase } = require("./models"); 
 
-Leave.sync({ alter: true })
+Purchase.sync({ alter: true })
   .then(() => console.log("Database Migrated & Synced Successfully"))
   .catch(err => console.log("Migration Error:", err));

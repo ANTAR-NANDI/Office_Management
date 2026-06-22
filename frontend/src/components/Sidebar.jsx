@@ -41,11 +41,19 @@ function Sidebar() {
                     name: "Attendance Report",
                     path: "/report/attendance",
                 },
-                {
-                    name: "Salary Report",
-                    path: "/report/salary",
-                }
             ]
+        },
+         {
+            name: "Cost Center",
+            icon: <FileText size={18} />,
+            path: "/costs",
+            allowedRoles: ["admin", "hr", "employee"] // View scope handles sorting rules internally
+        },
+         {
+            name: "Purchases",
+            icon: <FileText size={18} />,
+            path: "/purchases",
+            allowedRoles: ["admin", "hr", "employee"] // View scope handles sorting rules internally
         },
         {
             name: "Leave Requests",
