@@ -40,8 +40,13 @@ const login = async (req, res) => {
       return res.status(400).json({ message: "Invalid password" });
     }
 
+    // 👈 CRUCIAL: Include 'role' matching employee.type in the payload
     const token = jwt.sign(
-      { id: employee.id, email: employee.email },
+      { 
+        id: employee.id, 
+        email: employee.email, 
+        role: employee.type // e.g., 'admin', 'hr', 'employee'
+      },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
@@ -49,7 +54,12 @@ const login = async (req, res) => {
     res.json({
       message: "Login successful",
       token,
-      employee,
+      employee: {
+        id: employee.id,
+        name: employee.name,
+        email: employee.email,
+        type: employee.type // send type to store in frontend
+      },
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

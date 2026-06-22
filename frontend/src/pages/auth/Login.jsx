@@ -26,7 +26,9 @@ function Login() {
                 email,
                 password,
             });
-            
+            localStorage.setItem("token", response.data.token);
+        localStorage.setItem("user_id", response.data.employee.id);
+        localStorage.setItem("user_role", response.data.employee.type);
             setToken(response.data.token,response.data.employee.id);
             navigate("/dashboard");
         } catch (error) {

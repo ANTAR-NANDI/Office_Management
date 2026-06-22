@@ -1,6 +1,6 @@
-import { NavLink, useNavigate, useLocation } from "react-router-dom"; // Merged & added useLocation
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
-import Logo from "../assets/logo.png";
+import Logo from "../assets/logo.png"; // [cite: 127]
 import { 
     ChevronDown, 
     LayoutDashboard, 
@@ -8,29 +8,34 @@ import {
     Settings, 
     FileText, 
     LogOut 
-} from "lucide-react";
-
+} from "lucide-react"; // [cite: 127, 128]
 import { logout } from "../utils/auth";
 
 function Sidebar() {
-    const navigate = useNavigate();
-    const location = useLocation(); // Hook to find current active URL path
-    const [openMenu, setOpenMenu] = useState(null);
+    const navigate = useNavigate(); // [cite: 129]
+    const location = useLocation();
+    const [openMenu, setOpenMenu] = useState(null); // [cite: 129]
+    
+    // 👈 Get the current user's role from local storage
+    const userRole = localStorage.getItem("user_role") || "employee";
 
     const menuItems = [
         {
             name: "Dashboard",
             icon: <LayoutDashboard size={18} />,
             path: "/dashboard",
+            allowedRoles: ["admin", "hr", "employee"] // Accessible to everyone
         },
         {
             name: "Employees",
             icon: <Users size={18} />,
             path: "/employees",
+            allowedRoles: ["admin", "hr"] // 👈 Hides completely from standard 'employee'
         },
         {
             name: "Reports",
             icon: <FileText size={18} />,
+            allowedRoles: ["admin", "hr"], // 👈 Restricts entire dropdown grouping
             children: [
                 {
                     name: "Attendance Report",
@@ -46,68 +51,51 @@ function Sidebar() {
             name: "Settings",
             icon: <Settings size={18} />,
             path: "/settings",
+            allowedRoles: ["admin"] // 👈 Strictly visible to 'admin'
         },
     ];
 
-    // Automatically expand parent dropdown if a sub-route is active on page load/refresh
+    // Filter items based on the user's role
+    const filteredMenuItems = menuItems.filter(item => 
+        item.allowedRoles.includes(userRole)
+    );
+
     useEffect(() => {
-        const currentActiveParent = menuItems.find(item => 
+        const currentActiveParent = filteredMenuItems.find(item => 
             item.children?.some(child => child.path === location.pathname)
         );
         if (currentActiveParent) {
             setOpenMenu(currentActiveParent.name);
         }
     }, [location.pathname]);
-
     const handleLogout = () => {
         logout();
         navigate("/");
     };
 
     return (
-         <aside className="w-72 bg-slate-900 text-white flex flex-col shadow-3xl">
+        <aside className="w-72 h-screen bg-slate-900 text-white flex flex-col shadow-2xl sticky top-0">
+            <div className="h-20 flex items-center justify-center px-6 border-b border-slate-800">
+                <img src={Logo} alt="Logo" className="h-12 w-auto object-contain" />
+            </div>
 
-            {/* Logo */}
-          <div className="h-24 flex items-center px-6 border-b border-slate-800">
-    <img
-        src={Logo}
-        alt="Logo"
-        className="h-53 mt-8 w-full object-contain"
-    />
-</div>
-
-
-            {/* Menu Section */}
             <nav className="flex-1 p-4 overflow-y-auto">
                 <ul className="space-y-2">
-                    {menuItems.map((item) => (
+                    {/* Map over filtered items instead of the raw array */}
+                    {filteredMenuItems.map((item) => (
                         <li key={item.name}>
                             {item.children ? (
                                 <>
-                                    {/* Parent Menu Item (Dropdown Button) */}
                                     <button
-                                        onClick={() =>
-                                            setOpenMenu(openMenu === item.name ? null : item.name)
-                                        }
-                                        className={`flex items-center justify-between w-full px-4 py-3 rounded-xl transition-all ${
-                                            menuItems.find(i => i.name === item.name)?.children?.some(c => c.path === location.pathname)
-                                                ? "text-white bg-slate-800/50"
-                                                : "text-slate-300 hover:bg-slate-800 hover:text-white"
-                                        }`}
+                                        onClick={() => setOpenMenu(openMenu === item.name ? null : item.name)}
+                                        className="flex items-center justify-between w-full px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800"
                                     >
                                         <div className="flex items-center gap-3">
                                             {item.icon}
                                             <span className="font-medium text-sm">{item.name}</span>
                                         </div>
-                                        <ChevronDown
-                                            size={16}
-                                            className={`transition-transform duration-200 ${
-                                                openMenu === item.name ? "rotate-180" : ""
-                                            }`}
-                                        />
+                                        <ChevronDown size={16} className={`transition-transform ${openMenu === item.name ? "rotate-180" : ""}`} />
                                     </button>
-
-                                    {/* Dropdown Menu Children */}
                                     {openMenu === item.name && (
                                         <ul className="ml-9 mt-1 pl-2 border-l border-slate-800 space-y-1">
                                             {item.children.map((child) => (
@@ -115,11 +103,7 @@ function Sidebar() {
                                                     <NavLink
                                                         to={child.path}
                                                         className={({ isActive }) =>
-                                                            `block px-3 py-2 rounded-lg text-sm transition-all ${
-                                                                isActive
-                                                                    ? "text-cyan-400 font-medium bg-slate-800"
-                                                                    : "text-slate-400 hover:text-white hover:bg-slate-800/50"
-                                                            }`
+                                                            `block px-3 py-2 rounded-lg text-sm ${isActive ? "text-cyan-400 font-medium bg-slate-800" : "text-slate-400 hover:text-white"}`
                                                         }
                                                     >
                                                         {child.name}
@@ -130,15 +114,10 @@ function Sidebar() {
                                     )}
                                 </>
                             ) : (
-                                /* Standard Base Link (No Dropdown Child) */
                                 <NavLink
                                     to={item.path}
                                     className={({ isActive }) =>
-                                        `flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-all ${
-                                            isActive
-                                                ? "bg-cyan-500 text-white shadow-lg shadow-cyan-500/20"
-                                                : "text-slate-300 hover:bg-slate-800 hover:text-white"
-                                        }`
+                                        `flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-all ${isActive ? "bg-cyan-500 text-white" : "text-slate-300 hover:bg-slate-800"}`
                                     }
                                 >
                                     {item.icon}
@@ -149,7 +128,7 @@ function Sidebar() {
                     ))}
                 </ul>
             </nav>
-
+            
             {/* Profile/User Section */}
             <div className="p-4 border-t border-slate-800 bg-slate-900">
                 <button
@@ -160,7 +139,6 @@ function Sidebar() {
                     Logout
                 </button>
             </div>
-
         </aside>
     );
 }

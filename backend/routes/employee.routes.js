@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const authorize = require("../middleware/authMiddleware");
 const {
     getAllEmployees,
     createEmployee,
@@ -7,16 +8,13 @@ const {
     deleteEmployee
 } = require("../controllers/employee.controller");
 
-// Matches: GET /api/employees
-router.get("/", getAllEmployees);
+router.get("/", authorize(["admin", "hr", "employee"]), getAllEmployees);
 
-// Matches: POST /api/employees/create
-router.post("/create", createEmployee);
+// Only Admin and HR can create or update employee profiles
+router.post("/create", authorize(["admin", "hr"]), createEmployee);
+router.put("/update/:id", authorize(["admin", "hr"]), updateEmployee);
 
-// Matches: PUT /api/employees/update/:id
-router.put("/update/:id", updateEmployee);
-
-// Matches: DELETE /api/employees/delete/:id
-router.delete("/delete/:id", deleteEmployee);
+// Only the Admin can permanently delete an employee record
+router.delete("/delete/:id", authorize(["admin"]), deleteEmployee);
 
 module.exports = router;
