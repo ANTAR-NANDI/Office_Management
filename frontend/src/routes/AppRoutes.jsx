@@ -8,6 +8,7 @@ import Attendance from "../pages/attendance/Attendance";
 import AttendanceDetails from "../pages/attendance/AttendanceDetails";
 
 import DashboardLayout from "../layouts/DashboardLayout";
+import Settings from "../pages/Settings";
 
 function AppRoutes() {
     return (
@@ -31,6 +32,8 @@ function AppRoutes() {
                         path="/report/attendance/details/:id"
                         element={<AttendanceDetails />}
                     />
+                    <Route path="/settings" element={<Settings />} />
+
 
                 </Route>
 

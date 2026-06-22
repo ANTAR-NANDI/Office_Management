@@ -34,46 +34,74 @@ function Dashboard() {
             setLoading(false);
         }
     };
-   const handleCheckIn = async () => {
-    try {
-        const employee_id = localStorage.getItem("user_id");
+ const handleCheckIn = () => {
+            const employee_id = localStorage.getItem("user_id");
+            if (!employee_id) return alert("User not logged in");
 
-        if (!employee_id) {
-            alert("User not logged in");
-            return;
-        }
+            // 1. Trigger Native Web Browser Geolocation Prompt request
+            if (!navigator.geolocation) {
+                return alert("Geolocation is not supported by your browser");
+            }
 
-        // Fixed: Added the missing forward slash before attendance
-        const res = await api.post("/attendance/checkin", {
-            employee_id,
-        });
+            // Prompt user and capture current track positions
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    const { latitude, longitude } = position.coords;
 
-        alert("Checked In Successfully");
-        fetchDashboardStats(); // Refresh stats instantly after checking in!
-    } catch (err) {
-        alert(err.response?.data?.message || "Check-in failed");
-    }
-};
+                    try {
+                        // 2. Pass latitude and longitude down into your payload body
+                        const res = await api.post("/attendance/checkin", {
+                            employee_id,
+                            latitude,
+                            longitude
+                        });
 
-    const handleCheckOut = async () => {
-        try {
-           const employee_id = localStorage.getItem("user_id")
-           console.log(employee_id);
-         if (!employee_id) {
-            alert("User not logged in");
-            return;
-        }
-
-            await api.post("/attendance/checkout", {
-                employee_id,
-            });
-
-
-            alert("Checked Out Successfully");
-        } catch (err) {
-            alert(err.response.data.message);
-        }
+                        alert("Checked In Successfully");
+                        fetchDashboardStats(); // Refresh stats instantly after checking in!
+                    } catch (err) {
+                        alert(err.response?.data?.message || "Check-in failed");
+                    }
+                },
+                (error) => {
+                    // Handle cases where user clicks block or has GPS disabled
+                    alert("Location access denied. Please allow location access to check in.");
+                },
+                { enableHighAccuracy: true } // Enforces hardware GPS over fuzzy IP location tracking
+            );
     };
+
+  const handleCheckOut = () => {
+    const employee_id = localStorage.getItem("user_id");
+    if (!employee_id) return alert("User not logged in");
+
+    if (!navigator.geolocation) {
+        return alert("Geolocation is not supported by your browser");
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        async (position) => {
+            const { latitude, longitude } = position.coords;
+
+            try {
+                // 2. Pass coordinates safely down to backend check-out tracking endpoints
+                const res = await api.post("/attendance/checkout", {
+                    employee_id,
+                    latitude,
+                    longitude
+                });
+
+                alert("Checked Out Successfully");
+                fetchDashboardStats();
+            } catch (err) {
+                alert(err.response?.data?.message || "Check-out failed");
+            }
+        },
+        (error) => {
+            alert("Location access denied. Please allow location access to check out.");
+        },
+        { enableHighAccuracy: true }
+    );
+};
 
     useEffect(() => {
         fetchDashboardStats();

@@ -134,89 +134,105 @@ router.get("/details/:employee_id", async (req, res) => {
         });
     }
 });
+const Setting = require("../models/Setting"); // Import settings configuration rules
+const { getDistanceInMeters } = require("../utils/geoFence"); // Import geo helper
 
+// 🟢 CHECK-IN ROUTE WITH GEOFENCING保護
 router.post("/checkin", async (req, res) => {
     try {
-        const { employee_id } = req.body; // [cite: 46]
-        const now = new Date();
-        // Target Bangladesh timezone explicitly
-        const options = { timeZone: "Asia/Dhaka", hour12: false };
-        // 1. Get accurate Date (YYYY-MM-DD)
-        const datePart = now.toLocaleDateString("en-CA", options); // Format: YYYY-MM-DD
-        // 2. Get accurate Time (HH:MM:SS)
-        const timePart = now.toLocaleTimeString("en-US", options); // Format: HH:MM:SS
-        // 10:00 AM status check
-        const cutoff = "10:00:00";
-        const status = timePart <= cutoff ? "Present" : "Late";
-        // Prevent duplicate check-in [cite: 18]
-        const existing = await Attendance.findOne({
-            where: {
-                employee_id,
-                date: datePart,
-            },
-        });
-        if (existing) {
-            return res.status(400).json({
-                message: "Already checked in today",
+        const { employee_id, latitude, longitude } = req.body;
+
+        // 1. Verify frontend coordinate transmissions exist
+        if (!latitude || !longitude) {
+            return res.status(400).json({ message: "Location coordinates are required to check in." });
+        }
+
+        // 2. Fetch active company office geofence rule credentials
+        const config = await Setting.findOne(); // Pulls the entry configurations row
+        if (!config) {
+            return res.status(500).json({ message: "System Error: Office Geofence rules are not configured." });
+        }
+
+        // 3. Compute distance boundary lines
+        const calculatedDistance = getDistanceInMeters(
+            parseFloat(latitude), 
+            parseFloat(longitude), 
+            parseFloat(config.latitude), 
+            parseFloat(config.longitude)
+        );
+        console.log("Calculated Distance Is ",calculatedDistance);
+
+        // 4. Evaluate radius breach check constraints
+        if (calculatedDistance > config.radius) {
+            return res.status(400).json({ 
+                message: `Check-in failed. You are outside the office boundary (${Math.round(calculatedDistance)} meters away).` 
             });
         }
+
+        // --- Rest of your original validation and creation code ---
+        const now = new Date();
+        const options = { timeZone: "Asia/Dhaka", hour12: false };
+        const datePart = now.toLocaleDateString("en-CA", options);
+        const timePart = now.toLocaleTimeString("en-US", options);
+
+        const existing = await Attendance.findOne({ where: { employee_id, date: datePart } });
+        if (existing) return res.status(400).json({ message: "Already checked in today" });
+
+        const status = timePart <= "10:00:00" ? "Present" : "Late";
         const attendance = await Attendance.create({
             employee_id,
             date: datePart,
             check_in: timePart,
             status,
         });
+
         res.json(attendance);
     } catch (error) {
-        res.status(500).json({
-            message: error.message,
-        });
+        res.status(500).json({ message: error.message });
     }
 });
-   router.post("/checkout", async (req, res) => {
+
+// 🟢 CHECK-OUT ROUTE WITH GEOFENCING保護
+router.post("/checkout", async (req, res) => {
     try {
-        const { employee_id } = req.body;
+        const { employee_id, latitude, longitude } = req.body;
+
+        if (!latitude || !longitude) {
+            return res.status(400).json({ message: "Location coordinates are required to check out." });
+        }
+
+        const config = await Setting.findOne();
+        if (!config) return res.status(500).json({ message: "Office Geofence rules are not configured." });
+
+        const calculatedDistance = getDistanceInMeters(
+            parseFloat(latitude), 
+            parseFloat(longitude), 
+            parseFloat(config.latitude), 
+            parseFloat(config.longitude)
+        );
+
+        if (calculatedDistance > config.radius) {
+            return res.status(400).json({ 
+                message: `Check-out failed. You must be at the office to check out (${Math.round(calculatedDistance)} meters away).` 
+            });
+        }
+
+        // --- Rest of your localized check-out save execution block ---
         const now = new Date();
-
-        // Target Bangladesh timezone explicitly (Consistent with Check-In)
         const options = { timeZone: "Asia/Dhaka", hour12: false };
+        const datePart = now.toLocaleDateString("en-CA", options);
+        const timePart = now.toLocaleTimeString("en-US", options);
 
-        // 1. Get accurate Date (YYYY-MM-DD)
-        const datePart = now.toLocaleDateString("en-CA", options); // Format: YYYY-MM-DD
+        const record = await Attendance.findOne({ where: { employee_id, date: datePart } });
+        if (!record) return res.status(404).json({ message: "No check-in record found for today" });
+        if (record.check_out) return res.status(400).json({ message: "Already checked out today" });
 
-        // 2. Get accurate Time (HH:MM:SS)
-        const timePart = now.toLocaleTimeString("en-US", options); // Format: HH:MM:SS
-
-        // Find today's check-in record for this employee
-        const record = await Attendance.findOne({
-            where: {
-                employee_id,
-                date: datePart, // Using the timezone-safe date string
-            },
-        });
-
-        if (!record) {
-            return res.status(404).json({
-                message: "No check-in record found for today",
-            });
-        }
-
-        // Prevent updating check-out if they already checked out
-        if (record.check_out) {
-            return res.status(400).json({
-                message: "Already checked out today",
-            });
-        }
-
-        // Update the checkout field with the localized time string
         record.check_out = timePart;
         await record.save();
 
         res.json(record);
     } catch (error) {
-        res.status(500).json({
-            message: error.message,
-        });
+        res.status(500).json({ message: error.message });
     }
 });
 

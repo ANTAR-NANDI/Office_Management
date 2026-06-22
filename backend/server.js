@@ -27,11 +27,13 @@ const authRoutes = require("./routes/auth.routes");
 const employeeRoutes = require("./routes/employee.routes");
 const attendanceRoutes =require("./routes/attendance.routes");
 const dashboardRoutes = require("./routes/dashboard.routes");
+const settingRoutes = require("./routes/setting.routes");
+    app.use("/api/settings", settingRoutes);
     app.use("/api/auth", authRoutes);
     app.use("/api/employees", employeeRoutes);
     app.use("/api/attendance", attendanceRoutes);
     app.use("/api/dashboard", dashboardRoutes);
 const {  Employee, Attendance } = require("./models");
-sequelize.sync({ alter: true })
-  .then(() => console.log("Database Migrated & Synced Successfully"))
-  .catch(err => console.log("Migration Error:", err));
+// sequelize.sync({ alter: true })
+//   .then(() => console.log("Database Migrated & Synced Successfully"))
+//   .catch(err => console.log("Migration Error:", err));
