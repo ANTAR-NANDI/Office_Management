@@ -5,12 +5,31 @@ const sequelize = require("./config/db");
 
 const app = express();
 
-app.use(cors());
+const allowedOrigins = [
+  "http://localhost:5173",                 // 🟢 আপনার লোকাল রিঅ্যাক্ট অ্যাপ (Vite)
+  "http://localhost:3000",                 // আপনার লোকাল রিঅ্যাক্ট অ্যাপ (CRA)
+  "https://attendance.w3xplorers.com"      // আপনার লাইভ রিঅ্যাক্ট অ্যাপ
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true, // যদি কুকি বা টোকেন পাস করতে চান
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.json({ message: "API Working" });
-});
+// app.get("/", (req, res) => {
+//   res.json({ message: "API Working" });
+// });
 
 // Test DB Connection
 sequelize.authenticate()
